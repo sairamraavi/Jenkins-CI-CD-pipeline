@@ -1,0 +1,3 @@
+[submodule "flask_Practice"]
+	path = flask_Practice
+	url = https://github.com/sairamraavi/flask_Practice.git
