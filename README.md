@@ -340,9 +340,13 @@ are intentionally kept out of automation.
 
 ## Jenkins Configuration
 
+![Jenkins Dashboard](screenshots/jenkins_dashboard_home.png)
+
 ### Plugins installed
 Git, GitHub, Pipeline, SSH Agent, Credentials Binding, Email Extension, Workspace Cleanup,
 Blue Ocean.
+
+![Jenkins Plugins Installed](screenshots/jenkins_plugins_installed.png)
 
 ### Credentials created
 
@@ -355,19 +359,28 @@ Blue Ocean.
 GitHub password authentication is deprecated, so a **fine-grained Personal Access Token**
 was generated (Contents: Read & write, Metadata: Read-only) and used for `github-creds`.
 
+![GitHub Personal Access Token](screenshots/github_personal_access_token.png)
+![Jenkins Update Credentials](screenshots/jenkins_pipeline_update_credentials.png)
+
 ### GitHub Webhook
 - Payload URL: `http://<JENKINS-PUBLIC-IP>:8080/github-webhook/`
 - Content type: `application/json`
 - Event: `push`
+
+![GitHub Webhook Configuration](screenshots/github_add_webhook.png)
 
 ### SMTP (email notifications)
 - Server: `smtp.gmail.com`, Port `587`, TLS enabled
 - A Gmail **App Password** was used (regular password is blocked by Google for SMTP)
 - Notifications are sent to the developer's email on both success and failure
 
+![Jenkins SMTP Configuration](screenshots/Jenkins-smtp-config.png)
+
 ---
 
 ## Pipeline Stages
+
+![Creating the Jenkins Pipeline](screenshots/jenkins_pipeline_create_new.png)
 
 The final, stable pipeline (`Jenkinsfile`) runs the following stages:
 
@@ -375,7 +388,12 @@ The final, stable pipeline (`Jenkinsfile`) runs the following stages:
 Checkout SCM → Checkout Source → Build → Unit Test → Deploy to Flask Server → Health Check → Post Actions
 ```
 
+![Jenkins Build Details](screenshots/jenkins_build_details.png)
+
 - **Build** — creates a virtual environment and installs `requirements.txt`
+
+![Requirements Install Logs](screenshots/requirements_install_logs.png)
+
 - **Unit Test** — runs `pytest` against `test_app.py`
 - **Deploy to Flask Server** — uses the `sshagent` plugin with the `flask-server`
   credential to `scp` a freshly generated `.env` file and run a remote script that pulls
@@ -396,6 +414,9 @@ the assignment priority was a fully working, reliable deploy pipeline end to end
 This project had a lot of trial and error before it worked reliably. Below is an honest
 record of the real issues hit along the way — this is a fair amount of the actual learning
 from the assignment.
+
+![Jenkins Build Failure Log](screenshots/jenkins_build_fail_log.png)
+![Jenkins Node Offline / Disk Space Issue](screenshots/jenkins_build_node_fail.png)
 
 | Challenge | Root Cause | Resolution |
 |---|---|---|
@@ -420,7 +441,17 @@ from the assignment.
 
 After a successful pipeline run:
 - Jenkins Blue Ocean shows all stages green (`Checkout → Build → Unit Test → Deploy → Health Check → Post Actions`)
+
+![Jenkins Pipeline Success](screenshots/jenkins_pipeline_sucess.png)
+
 - `systemctl status flask-app` and `systemctl status nginx` show both services active on the Flask EC2 host
+
+![Flask Application Status on EC2](screenshots/ec2-flask-application-status.png)
+
+- The Jenkins server/node itself is healthy and ready to pick up builds
+
+![Jenkins Server Status](screenshots/jenkins_server_status.png)
+
 - The application (a Student Registration System built with Flask + MongoDB) is reachable at `http://<FLASK-PUBLIC-IP>`
 - A build success/failure email is received at the configured recipient address
 
